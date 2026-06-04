@@ -84,31 +84,40 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
         /* ==========================================
-           기호 규칙 게임 (Mission 2) 전용 독립 스타일 
+           기호 규칙 게임 (Mission 2) 모바일 반응형 스타일 
            ========================================== */
-        .rg-canvas-container { width: 900px; height: 500px; background-color: #fdfbf7; background-image: linear-gradient(to bottom, #ffffff, #fdfbf7); position: absolute; transform-origin: top left; border-radius: 12px; overflow: hidden; touch-action: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-family: 'Noto Sans KR', sans-serif; }
-        .rg-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; height: 40px; background: rgba(255,255,255,0.8); border-bottom: 1px solid #e0e0e0; color: #333; }
-        .rg-instruction { margin: 20px auto; padding: 8px 20px; background: #fff0f5; color: #555; border-radius: 20px; border: 2px dashed #ffb6c1; font-weight: bold; width: fit-content; font-size: 16px; }
-        .rg-rows-container { display: flex; flex-direction: column; gap: 10px; padding: 0 40px; margin-top: 15px; }
-        .rg-problem-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: rgba(255,255,255,0.7); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .rg-name { font-size: 22px; font-weight: 800; color: #2c3e50; cursor: pointer; transition: color 0.2s, transform 0.1s; width: 250px; text-align: left; }
+        .rg-canvas-container { width: 100%; height: 100%; display: flex; flex-direction: column; background-color: #fdfbf7; position: relative; font-family: 'Noto Sans KR', sans-serif; border-radius: 0; overflow: hidden; }
+        @media(min-width: 768px) { .rg-canvas-container { border-radius: 16px; width: 95%; height: 95%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: auto; } }
+        .rg-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; height: 50px; background: white; border-bottom: 1px solid #e0e0e0; color: #333; flex-shrink: 0; }
+        .rg-scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; padding-bottom: 20px; }
+        .rg-instruction { margin: 15px auto; padding: 10px 20px; background: #fff0f5; color: #555; border-radius: 20px; border: 2px dashed #ffb6c1; font-weight: bold; width: fit-content; max-width: 90%; text-align: center; font-size: 14px; word-break: keep-all; }
+        .rg-rows-container { display: flex; flex-direction: column; gap: 15px; padding: 0 15px; }
+        @media(min-width: 768px) { .rg-rows-container { padding: 0 40px; } }
+        .rg-problem-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 15px; background: rgba(255,255,255,0.7); border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); gap: 12px; border: 1px solid #eee; }
+        @media(min-width: 768px) { .rg-problem-row { flex-wrap: nowrap; } }
+        .rg-name { font-size: 18px; font-weight: 800; color: #2c3e50; cursor: pointer; transition: color 0.2s, transform 0.1s; width: 100%; text-align: center; }
+        @media(min-width: 768px) { .rg-name { width: 250px; text-align: left; font-size: 22px; } }
         .rg-name:hover { color: #e83e8c; }
         .rg-name:active { transform: scale(0.97); }
-        .rg-interaction { display: flex; align-items: center; gap: 15px; flex-grow: 1; justify-content: flex-end; }
-        .rg-source-word { position: relative; height: 45px; display: flex; align-items: center; }
-        .rg-arrow { font-size: 28px; color: #ffb6c1; font-weight: bold; }
-        .rg-target-area { display: flex; gap: 8px; justify-content: flex-start; }
-        .rg-drop-box { width: 45px; height: 55px; border: 3px dashed #ccc; border-radius: 8px; background: rgba(255,255,255,0.5); display: flex; justify-content: center; align-items: center; font-size: 36px; font-weight: bold; color: #e0e0e0; }
+        .rg-interaction { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; width: 100%; justify-content: center; }
+        @media(min-width: 768px) { .rg-interaction { flex-wrap: nowrap; width: auto; flex-grow: 1; justify-content: flex-end; gap: 15px; } }
+        .rg-source-word { position: relative; height: 45px; display: flex; align-items: center; justify-content: center; }
+        .rg-arrow { font-size: 24px; color: #ffb6c1; font-weight: bold; }
+        .rg-target-area { display: flex; gap: 8px; justify-content: center; }
+        .rg-drop-box { width: 40px; height: 50px; border: 3px dashed #ccc; border-radius: 8px; background: rgba(255,255,255,0.5); display: flex; justify-content: center; align-items: center; font-size: 28px; font-weight: bold; color: #e0e0e0; }
+        @media(min-width: 768px) { .rg-drop-box { width: 45px; height: 55px; font-size: 36px; } }
         .rg-drop-box.active { border-color: #ff69b4; background: rgba(255,105,180,0.1); }
         .rg-drop-box.filled { border-color: #ff69b4; background: rgba(255,105,180,0.1); color: #ff1493; }
-        .rg-tile { width: 35px; height: 45px; background: white; border: 2px solid #555; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; color: #333; cursor: grab; position: absolute; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); transition: transform 0.1s; z-index: 20; }
-        .rg-tile.dragging { z-index: 100; transform: scale(1.1); box-shadow: 5px 10px 20px rgba(0,0,0,0.3); opacity: 0.9; cursor: grabbing; }
-        .rg-tile.locked { cursor: default; border: none; background: transparent; box-shadow: none; font-size: 42px; color: #ff1493; position: static !important; }
+        .rg-tile { width: 32px; height: 42px; background: white; border: 2px solid #555; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: #333; cursor: grab; position: absolute; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); transition: transform 0.1s; z-index: 20; touch-action: none; } /* touch-action: none crucial for drag */
+        @media(min-width: 768px) { .rg-tile { width: 35px; height: 45px; font-size: 24px; } }
+        .rg-tile.dragging { z-index: 100; transform: scale(1.1); box-shadow: 5px 10px 20px rgba(0,0,0,0.3); opacity: 0.9; cursor: grabbing; margin: 0 !important; }
+        .rg-tile.locked { cursor: default; border: none; background: transparent; box-shadow: none; font-size: 32px; color: #ff1493; position: static !important; }
+        @media(min-width: 768px) { .rg-tile.locked { font-size: 42px; } }
         .rg-ghost { opacity: 0.3 !important; border-style: dashed !important; background: transparent !important; pointer-events: none; z-index: 1; }
         .rg-x-mark { position: absolute; font-size: 50px; z-index: 200; pointer-events: none; transform: translate(-50%, -50%); animation: rg-popFade 0.6s ease-out forwards; text-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         @keyframes rg-popFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 40% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
-        .rg-tracker { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 90%; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; z-index: 5; }
-        .rg-tracker-item { font-size: 11px; color: #95a5a6; background: #ecf0f1; padding: 3px 8px; border-radius: 12px; border: 1px solid #bdc3c7; cursor: pointer; transition: all 0.3s; }
+        .rg-tracker { flex-shrink: 0; background: rgba(255,255,255,0.9); padding: 12px; border-top: 1px solid #e0e0e0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; z-index: 50; }
+        .rg-tracker-item { font-size: 11px; color: #95a5a6; background: #ecf0f1; padding: 4px 8px; border-radius: 12px; border: 1px solid #bdc3c7; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
         .rg-tracker-item:hover { background: #dcdde1; transform: scale(1.05); color: #2c3e50; }
         .rg-tracker-item.completed { background: #fff0f5; color: #e83e8c; border-color: #ff69b4; font-weight: bold; box-shadow: 0 0 5px rgba(255,105,180,0.4); }
     </style>
@@ -396,7 +405,7 @@
         }
 
         // ==========================================
-        // 2-2. 규칙 게임 코어 엔진 (Mission 2)
+        // 2-2. 규칙 게임 코어 엔진 (모바일 반응형 최적화)
         // ==========================================
         class RuleGameEngine {
             constructor(container, onComplete, onAlert) {
@@ -414,7 +423,6 @@
                 this.draggedEl = null;
                 this.offsetX = 0; this.offsetY = 0;
                 this.origLeft = 0; this.origTop = 0;
-                this.currentScale = 1;
 
                 this.init();
             }
@@ -423,26 +431,26 @@
                 this.container.innerHTML = `
                     <div class="rg-canvas-container" id="rg-canvas">
                         <div class="rg-header">
-                            <div style="font-weight:bold; font-size:12px;">원소 기호 규칙 (알파벳 드래그)</div>
-                            <div style="font-size:10px; color:#999;">Mission 2</div>
+                            <div style="font-weight:bold; font-size:14px;"><i class="fa-solid fa-shapes mr-2"></i>원소 기호 규칙</div>
+                            <div style="font-size:11px; color:#fff; background:#f472b6; padding:3px 8px; border-radius:12px; font-weight:bold;">Mission 2</div>
                         </div>
-                        <div style="position:relative; width:100%; height:460px; display:flex; flex-direction:column; align-items:center;" id="rg-game-area">
+                        <div class="rg-scroll-area" id="rg-scroll-area">
                             <div class="rg-instruction">원래 이름의 알파벳을 오른쪽 빈칸으로 드래그하여 기호를 완성하세요!</div>
                             <div class="rg-rows-container" id="rg-rows"></div>
-                            <button id="rg-next-btn" style="display:none; position:absolute; bottom:50px; right:30px; padding:12px 25px; font-weight:bold; background:#4CAF50; color:white; border-radius:25px; cursor:pointer; z-index:30;">다음 그룹 ➔</button>
-                            <div class="rg-tracker" id="rg-tracker"></div>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button id="rg-next-btn" style="display:none; margin: 0 auto 40px auto; padding:12px 25px; font-weight:bold; background:#4CAF50; color:white; border-radius:25px; cursor:pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">다음 그룹 ➔</button>
+                            </div>
                         </div>
+                        <div class="rg-tracker" id="rg-tracker"></div>
                     </div>
                 `;
                 this.canvasEl = this.container.querySelector('#rg-canvas');
+                this.scrollAreaEl = this.container.querySelector('#rg-scroll-area');
                 this.rowsEl = this.container.querySelector('#rg-rows');
                 this.trackerEl = this.container.querySelector('#rg-tracker');
                 this.nextBtn = this.container.querySelector('#rg-next-btn');
 
                 this.nextBtn.onclick = () => this.nextGroup();
-                
-                this.resizeHandler = () => this.resize();
-                window.addEventListener('resize', this.resizeHandler);
                 
                 this.pointerMoveHandler = (e) => this.onMove(e);
                 this.pointerUpHandler = (e) => this.onUp(e);
@@ -450,24 +458,13 @@
                 document.addEventListener('pointerup', this.pointerUpHandler);
 
                 this.prepareData();
-                this.resize();
                 this.loadGroup();
             }
 
             destroy() {
-                window.removeEventListener('resize', this.resizeHandler);
                 document.removeEventListener('pointermove', this.pointerMoveHandler);
                 document.removeEventListener('pointerup', this.pointerUpHandler);
                 this.container.innerHTML = '';
-            }
-
-            resize() {
-                if(!this.container.parentElement) return;
-                const rect = this.container.getBoundingClientRect();
-                this.currentScale = Math.min(rect.width / 900, rect.height / 500);
-                this.canvasEl.style.transform = `scale(${this.currentScale})`;
-                this.canvasEl.style.left = `${(rect.width - (900 * this.currentScale)) / 2}px`;
-                this.canvasEl.style.top = `${(rect.height - (500 * this.currentScale)) / 2}px`;
             }
 
             prepareData() {
@@ -501,7 +498,7 @@
 
             loadGroup() {
                 if(this.currentGroupIdx >= this.problemGroups.length) {
-                    this.onAlert("기호 규칙 마스터 완료!");
+                    this.onAlert("기호 규칙 마스터 완료! 🎉");
                     if(this.onComplete) this.onComplete();
                     this.currentGroupIdx = 0;
                     this.trackerEl.querySelectorAll('span').forEach(s => s.classList.remove('completed'));
@@ -516,7 +513,7 @@
                 group.forEach((data, rIdx) => {
                     const row = document.createElement('div'); row.className = 'rg-problem-row';
                     const name = document.createElement('div'); name.className = 'rg-name';
-                    name.innerHTML = `${data.ko} (${data.en}) <span style="font-size:16px;">🔊</span>`;
+                    name.innerHTML = `${data.ko} <span style="font-size:16px; color:#777;">(${data.en})</span> <span style="font-size:16px;">🔊</span>`;
                     name.onclick = () => {
                         if('speechSynthesis' in window) {
                             window.speechSynthesis.cancel();
@@ -527,7 +524,7 @@
 
                     const inter = document.createElement('div'); inter.className = 'rg-interaction';
                     const src = document.createElement('div'); src.className = 'rg-source-word';
-                    const tgt = document.createElement('div'); tgt.className = 'rg-target-area'; // 수정됨: target -> tgt
+                    const tgt = document.createElement('div'); tgt.className = 'rg-target-area'; 
 
                     for(let i=0; i<data.symbol.length; i++) {
                         const box = document.createElement('div'); box.className = 'rg-drop-box';
@@ -537,12 +534,16 @@
                     }
 
                     const letters = data.en.split('');
-                    src.style.width = `${letters.length * 35 + (letters.length-1)*3}px`;
+                    const isMobile = window.innerWidth < 768;
+                    const tW = isMobile ? 32 : 35;
+                    const tG = 3;
+                    
+                    src.style.width = `${letters.length * tW + (letters.length-1)*tG}px`;
                     letters.forEach((ch, i) => {
                         const tile = document.createElement('div'); tile.className = 'rg-tile';
                         const dChar = i===0 ? ch.toUpperCase() : ch.toLowerCase();
                         tile.innerText = dChar; tile.dataset.char = dChar; tile.dataset.row = rIdx;
-                        tile.style.left = `${i*38}px`; tile.style.top = '0px';
+                        tile.style.left = `${i * (tW + tG)}px`; tile.style.top = '0px';
                         tile.onpointerdown = (e) => this.onDown(e, tile);
                         src.appendChild(tile);
                     });
@@ -567,21 +568,23 @@
 
                 const rect = tile.getBoundingClientRect();
                 const cvsRect = this.canvasEl.getBoundingClientRect();
-                this.offsetX = (e.clientX - rect.left) / this.currentScale;
-                this.offsetY = (e.clientY - rect.top) / this.currentScale;
+                this.offsetX = e.clientX - rect.left;
+                this.offsetY = e.clientY - rect.top;
 
                 this.canvasEl.appendChild(tile);
-                tile.style.left = `${(rect.left - cvsRect.left)/this.currentScale}px`;
-                tile.style.top = `${(rect.top - cvsRect.top)/this.currentScale}px`;
+                tile.style.left = `${rect.left - cvsRect.left}px`;
+                tile.style.top = `${rect.top - cvsRect.top}px`;
                 tile.classList.add('dragging');
                 tile.setPointerCapture(e.pointerId);
             }
 
             onMove(e) {
                 if(!this.isDragging || !this.draggedEl) return;
-                const rect = this.canvasEl.getBoundingClientRect();
-                this.draggedEl.style.left = `${(e.clientX - rect.left)/this.currentScale - this.offsetX}px`;
-                this.draggedEl.style.top = `${(e.clientY - rect.top)/this.currentScale - this.offsetY}px`;
+                const cvsRect = this.canvasEl.getBoundingClientRect();
+                const newX = e.clientX - cvsRect.left - this.offsetX;
+                const newY = e.clientY - cvsRect.top - this.offsetY;
+                this.draggedEl.style.left = `${newX}px`;
+                this.draggedEl.style.top = `${newY}px`;
             }
 
             onUp(e) {
@@ -638,15 +641,16 @@
                     
                     const tRect = targetBox.getBoundingClientRect(), cvRect = this.canvasEl.getBoundingClientRect();
                     const x = document.createElement('div'); x.className = 'rg-x-mark'; x.innerText = '❌';
-                    x.style.left = `${(tRect.left - cvRect.left + tRect.width/2)/this.currentScale}px`;
-                    x.style.top = `${(tRect.top - cvRect.top + tRect.height/2)/this.currentScale}px`;
+                    x.style.left = `${tRect.left - cvRect.left + tRect.width/2}px`;
+                    x.style.top = `${tRect.top - cvRect.top + tRect.height/2}px`;
                     this.canvasEl.appendChild(x); setTimeout(() => x.remove(), 600);
                 }
 
                 if(!isDropped) {
                     this.draggedEl.origParent.appendChild(this.draggedEl);
                     this.draggedEl.style.transition = 'left 0.3s, top 0.3s';
-                    this.draggedEl.style.left = `${this.origLeft}px`; this.draggedEl.style.top = `${this.origTop}px`;
+                    this.draggedEl.style.left = `${this.origLeft}px`; 
+                    this.draggedEl.style.top = `${this.origTop}px`;
                     const g = this.draggedEl.ghostEl;
                     setTimeout(() => { 
                         if(this.draggedEl) this.draggedEl.style.transition = 'transform 0.1s'; 
