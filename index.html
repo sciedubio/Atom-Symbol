@@ -879,6 +879,12 @@ function doPost(e) {
             const [rankModalOpen, setRankModalOpen] = useState(false);
             const [memScoreObj, setMemScoreObj] = useState(null);
 
+            // 미션 잠금 해제 상태 (기본적으로 1단계만 해제)
+            const [unlockedMissions, setUnlockedMissions] = useState([1]);
+            const [passwordModal, setPasswordModal] = useState({ isOpen: false, target: null });
+            const [pwdInput, setPwdInput] = useState('');
+            const [pwdError, setPwdError] = useState(false);
+
             // Mission 1 (Chem Engine)
             const canvasRef = useRef(null);
             const chemEngineRef = useRef(null);
@@ -1056,14 +1062,42 @@ function doPost(e) {
                 setRankModalOpen(true);
             };
 
+            // 탭 클릭 및 암호 확인 핸들러
+            const handleTabClick = (mission) => {
+                if (unlockedMissions.includes(mission)) {
+                    setActiveMission(mission);
+                } else {
+                    setPasswordModal({ isOpen: true, target: mission });
+                    setPwdInput('');
+                    setPwdError(false);
+                }
+            };
+
+            const handlePasswordSubmit = () => {
+                const { target } = passwordModal;
+                if ((target === 2 && pwdInput === '8282') || (target === 3 && pwdInput === '3030')) {
+                    setUnlockedMissions(prev => [...prev, target]);
+                    setActiveMission(target);
+                    setPasswordModal({ isOpen: false, target: null });
+                } else {
+                    setPwdError(true);
+                }
+            };
+
             return (
                 <div className="flex flex-col h-full overflow-hidden">
                     {/* Top Control Bar */}
                     <div className="flex-none p-3 glass flex justify-between items-center border-b border-gray-700 z-10 overflow-x-auto hide-scrollbar">
                         <div className="flex space-x-1 bg-gray-900 p-1 rounded-lg">
-                            <button onClick={() => setActiveMission(1)} className={`whitespace-nowrap px-3 py-1.5 rounded text-sm font-bold transition-colors ${activeMission === 1 ? 'bg-chem-primary text-slate-900' : 'text-gray-400 hover:text-white'}`}>물질 분류</button>
-                            <button onClick={() => setActiveMission(2)} className={`whitespace-nowrap px-3 py-1.5 rounded text-sm font-bold transition-colors ${activeMission === 2 ? 'bg-pink-400 text-slate-900' : 'text-gray-400 hover:text-white'}`}>기호 규칙</button>
-                            <button onClick={() => setActiveMission(3)} className={`whitespace-nowrap px-3 py-1.5 rounded text-sm font-bold transition-colors ${activeMission === 3 ? 'bg-chem-accent text-slate-900' : 'text-gray-400 hover:text-white'}`}>기호 메모리</button>
+                            <button onClick={() => handleTabClick(1)} className={`whitespace-nowrap px-3 py-1.5 rounded text-sm font-bold transition-colors ${activeMission === 1 ? 'bg-chem-primary text-slate-900' : 'text-gray-400 hover:text-white'}`}>
+                                물질 분류
+                            </button>
+                            <button onClick={() => handleTabClick(2)} className={`whitespace-nowrap px-3 py-1.5 rounded text-sm font-bold transition-colors ${activeMission === 2 ? 'bg-pink-400 text-slate-900' : 'text-gray-400 hover:text-white'}`}>
+                                {!unlockedMissions.includes(2) && <i className="fa-solid fa-lock text-xs mr-1 opacity-70"></i>}기호 규칙
+                            </button>
+                            <button onClick={() => handleTabClick(3)} className={`whitespace-nowrap px-3 py-1.5 rounded text-sm font-bold transition-colors ${activeMission === 3 ? 'bg-chem-accent text-slate-900' : 'text-gray-400 hover:text-white'}`}>
+                                {!unlockedMissions.includes(3) && <i className="fa-solid fa-lock text-xs mr-1 opacity-70"></i>}기호 메모리
+                            </button>
                         </div>
                         <div className="flex space-x-2 ml-4">
                             <button onClick={activeMission===1 ? resetMission1 : activeMission===3 ? initMemoryGame : null} className={`px-3 py-1.5 bg-gray-700 rounded text-xs font-bold active:scale-95 ${activeMission===2?'hidden':''}`}><i className="fa-solid fa-rotate-right mr-1"></i>리셋</button>
@@ -1197,6 +1231,35 @@ function doPost(e) {
                             </div>
                         )}
                     </div>
+
+                    {/* 암호 입력 모달 */}
+                    {passwordModal.isOpen && (
+                        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
+                            <div className="bg-chem-panel p-6 rounded-2xl w-full max-w-sm shadow-2xl border border-chem-accent text-center relative">
+                                <div className="text-4xl mb-4">🔒</div>
+                                <h2 className="text-xl font-bold text-white mb-2">{passwordModal.target}단계 미션 암호</h2>
+                                <p className="text-sm text-gray-400 mb-4">선생님이 알려주신 암호를 입력하세요.</p>
+                                <input 
+                                    type="password" 
+                                    pattern="[0-9]*" 
+                                    inputMode="numeric"
+                                    className={`w-full bg-slate-800 border ${pwdError ? 'border-red-500' : 'border-gray-600'} rounded-lg p-3 text-white focus:outline-none focus:border-chem-accent mb-2 text-center text-2xl tracking-[0.5em] font-mono`}
+                                    value={pwdInput} 
+                                    onChange={e => {setPwdInput(e.target.value); setPwdError(false);}} 
+                                    onKeyDown={e => e.key === 'Enter' && handlePasswordSubmit()}
+                                    maxLength="4" 
+                                    autoFocus
+                                />
+                                {pwdError && <p className="text-red-400 text-xs mb-4 animate-pulse">암호가 틀렸습니다.</p>}
+                                {!pwdError && <div className="mb-4"></div>}
+                                <div className="flex gap-2">
+                                    <button onClick={() => setPasswordModal({isOpen: false, target: null})} className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl active:scale-95 transition-colors">취소</button>
+                                    <button onClick={handlePasswordSubmit} className="flex-1 py-3 bg-chem-accent hover:bg-yellow-400 text-slate-900 font-bold rounded-xl active:scale-95 transition-colors">잠금 해제</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {rankModalOpen && <RankModal scoreData={memScoreObj} onClose={() => {setRankModalOpen(false); initMemoryGame();}} onGoReport={() => setView('report')} />}
                 </div>
             );
