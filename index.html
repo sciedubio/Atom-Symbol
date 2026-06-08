@@ -108,7 +108,7 @@
         @media(min-width: 768px) { .rg-drop-box { width: 45px; height: 55px; font-size: 36px; } }
         .rg-drop-box.active { border-color: #ff69b4; background: rgba(255,105,180,0.1); }
         .rg-drop-box.filled { border-color: #ff69b4; background: rgba(255,105,180,0.1); color: #ff1493; }
-        .rg-tile { width: 32px; height: 42px; background: white; border: 2px solid #555; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: #333; cursor: grab; position: absolute; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); transition: transform 0.1s; z-index: 20; touch-action: none; } /* touch-action: none crucial for drag */
+        .rg-tile { width: 32px; height: 42px; background: white; border: 2px solid #555; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: #333; cursor: grab; position: absolute; box-shadow: 2px 4px 6px rgba(0,0,0,0.15); transition: transform 0.1s; z-index: 20; touch-action: none; }
         @media(min-width: 768px) { .rg-tile { width: 35px; height: 45px; font-size: 24px; } }
         .rg-tile.dragging { z-index: 100; transform: scale(1.1); box-shadow: 5px 10px 20px rgba(0,0,0,0.3); opacity: 0.9; cursor: grabbing; margin: 0 !important; }
         .rg-tile.locked { cursor: default; border: none; background: transparent; box-shadow: none; font-size: 32px; color: #ff1493; position: static !important; }
@@ -740,10 +740,10 @@ function doPost(e) {
         );
 
         // 랭킹 등록 모달 (메모리 게임 클리어 후)
-        const RankModal = ({ scoreData, onClose, onGoReport }) => {
+        const RankModal = ({ scoreData, onClose, onGoReport, viewOnly = false }) => {
             const [name, setName] = useState('');
             const [ranks, setRanks] = useState([]);
-            const [status, setStatus] = useState('input'); // input, saving, list
+            const [status, setStatus] = useState(viewOnly ? 'list' : 'input'); // input, saving, list
 
             useEffect(() => {
                 if (status === 'list' && GOOGLE_SCRIPT_URL) {
@@ -777,9 +777,11 @@ function doPost(e) {
                 <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fade-in">
                     <div className="bg-chem-panel p-6 rounded-2xl w-full max-w-md shadow-2xl border border-chem-accent text-center relative">
                         <div className="text-5xl mb-2">🏆</div>
-                        <h2 className="text-2xl font-black text-chem-accent mb-4">메모리 게임 종료!</h2>
+                        <h2 className="text-2xl font-black text-chem-accent mb-4">
+                            {viewOnly ? '명예의 전당 (Top 10)' : '메모리 게임 종료!'}
+                        </h2>
                         
-                        {status === 'input' && (
+                        {status === 'input' && !viewOnly && (
                             <div className="animate-pop">
                                 <div className="text-gray-300 mb-4">
                                     <p>도달 스테이지: <span className="font-bold text-white">Stage {scoreData.stage}</span></p>
@@ -801,7 +803,7 @@ function doPost(e) {
 
                         {status === 'list' && (
                             <div className="animate-pop">
-                                <h3 className="text-lg font-bold border-b border-gray-600 pb-2 mb-3">명예의 전당 (Top 10)</h3>
+                                {!viewOnly && <h3 className="text-lg font-bold border-b border-gray-600 pb-2 mb-3">명예의 전당 (Top 10)</h3>}
                                 <div className="bg-slate-900 rounded-lg p-2 max-h-60 overflow-y-auto mb-4 text-sm">
                                     {ranks.length === 0 ? <p className="text-gray-500 py-4">랭킹 데이터가 없거나 로딩 중입니다.</p> : 
                                         ranks.map((r, i) => (
@@ -812,10 +814,18 @@ function doPost(e) {
                                         ))
                                     }
                                 </div>
-                                <button onClick={onGoReport} className="w-full py-3 bg-green-500 text-slate-900 font-bold rounded-xl active:scale-95 transition-transform">
-                                    결과 보고서 작성하기
-                                </button>
-                                <button onClick={onClose} className="w-full py-2 mt-2 text-gray-400 text-sm hover:text-white">실험실로 돌아가기</button>
+                                {viewOnly ? (
+                                    <button onClick={onClose} className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl active:scale-95 transition-colors">
+                                        닫기
+                                    </button>
+                                ) : (
+                                    <>
+                                        <button onClick={onGoReport} className="w-full py-3 bg-green-500 text-slate-900 font-bold rounded-xl active:scale-95 transition-transform">
+                                            결과 보고서 작성하기
+                                        </button>
+                                        <button onClick={onClose} className="w-full py-2 mt-2 text-gray-400 text-sm hover:text-white">실험실로 돌아가기</button>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
@@ -878,6 +888,7 @@ function doPost(e) {
             const [activeMission, setActiveMission] = useState(1); // 1: 분류, 2: 규칙, 3: 메모리
             const [rankModalOpen, setRankModalOpen] = useState(false);
             const [memScoreObj, setMemScoreObj] = useState(null);
+            const [isViewOnlyRank, setIsViewOnlyRank] = useState(false);
 
             // 미션 잠금 해제 상태 (기본적으로 1단계만 해제)
             const [unlockedMissions, setUnlockedMissions] = useState([1]);
@@ -1162,9 +1173,15 @@ function doPost(e) {
                             <div className="w-full h-full flex flex-col items-center justify-center p-4 relative">
                                 <div className="w-full max-w-3xl glass p-6 rounded-2xl shadow-2xl flex flex-col items-center border border-gray-700 relative overflow-hidden">
                                     <div className="w-full flex justify-between items-center mb-6">
-                                        <h2 className="text-xl font-black text-chem-accent">
-                                            <i className="fa-solid fa-gamepad mr-2"></i>기호 메모리 랭킹전 (Stage {stage + 1})
-                                            {isRevealing && <span className="text-chem-primary ml-4 text-sm animate-pulse">👀 3초간 외우세요!</span>}
+                                        <h2 className="text-xl font-black text-chem-accent flex flex-wrap items-center gap-2">
+                                            <span><i className="fa-solid fa-gamepad mr-2"></i>기호 메모리 랭킹전 (Stage {stage + 1})</span>
+                                            <button 
+                                                onClick={() => { setIsViewOnlyRank(true); setRankModalOpen(true); }}
+                                                className="px-3 py-1 bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 rounded-lg text-sm font-bold active:scale-95 hover:bg-yellow-500/30 transition-colors flex items-center"
+                                            >
+                                                <i className="fa-solid fa-trophy mr-1"></i>랭킹 보기
+                                            </button>
+                                            {isRevealing && <span className="text-chem-primary ml-2 text-sm animate-pulse">👀 3초간 외우세요!</span>}
                                         </h2>
                                         <div className="text-right">
                                             <div className={`text-2xl font-mono font-black ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-chem-element'}`}>
@@ -1260,7 +1277,18 @@ function doPost(e) {
                         </div>
                     )}
 
-                    {rankModalOpen && <RankModal scoreData={memScoreObj} onClose={() => {setRankModalOpen(false); initMemoryGame();}} onGoReport={() => setView('report')} />}
+                    {rankModalOpen && (
+                        <RankModal 
+                            scoreData={memScoreObj} 
+                            viewOnly={isViewOnlyRank}
+                            onClose={() => {
+                                setRankModalOpen(false); 
+                                if (!isViewOnlyRank) initMemoryGame();
+                                setIsViewOnlyRank(false);
+                            }}
+                            onGoReport={() => setView('report')} 
+                        />
+                    )}
                 </div>
             );
         };
